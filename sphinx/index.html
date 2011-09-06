@@ -55,7 +55,7 @@
 <tr class="field"><th class="field-name">Variable url:</th><td class="field-body">unique URL to retrieve this image, even if it is unassigned</td>
 </tr>
 <tr class="field"><th class="field-name" colspan="2">Variable rating:</th></tr>
-<tr><td>&nbsp;</td><td class="field-body">integer rating for the image (see <cite>Rating</cite>:class)</td>
+<tr><td>&nbsp;</td><td class="field-body">rating for the image</td>
 </tr>
 </tbody>
 </table>
@@ -117,10 +117,10 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">each key is an email address belonging to the user account and each value is the
-<cite>Image</cite>:class assigned to it, or <tt class="xref docutils literal"><span class="pre">None</span></tt> if no image is assigned</td>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dictionary where each key is an email address belonging to the user account and
+each value is the <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a> assigned to it, or <tt class="xref docutils literal"><span class="pre">None</span></tt> if no image is assigned</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <cite>Image</cite>:class}</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a>}</td>
 </tr>
 </tbody>
 </table>
@@ -135,9 +135,9 @@
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>emails</em> (vararg list of <cite>string</cite>) &#8211; email addresses to check</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">each key is an email address from the passed-in list and each value is a boolean
-of whether that email address belongs to a Gravatar account and has an image assigned
-to it.</td>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dictionary where each key is an email address from the passed-in list and each
+value is a boolean of whether that email address belongs to a Gravatar account and has
+an image assigned to it.</td>
 </tr>
 <tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <cite>boolean</cite>}</td>
 </tr>
@@ -154,7 +154,7 @@ to it.</td>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">images belonging to the user account</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <cite>Image</cite>:class</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -184,7 +184,7 @@ to it.</td>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><em>string data</em> &#8211; binary image data to save</li>
-<li><em>rating</em> (<cite>int</cite> (see <cite>Rating</cite>:class)) &#8211; rating for the new image</li>
+<li><em>rating</em> (<cite>int</cite> (see <a title="gravatar.Rating" class="reference internal" href="#gravatar.Rating"><tt class="xref docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
 </ul>
 </td>
 </tr>
@@ -208,7 +208,7 @@ to it.</td>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><em>string url</em> &#8211; URL pointing to an image to save</li>
-<li><em>rating</em> (<cite>int</cite> (see <cite>Rating</cite>:class)) &#8211; rating for the new image</li>
+<li><em>rating</em> (<cite>int</cite> (see <a title="gravatar.Rating" class="reference internal" href="#gravatar.Rating"><tt class="xref docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
 </ul>
 </td>
 </tr>
