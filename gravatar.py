@@ -77,8 +77,11 @@ class Image(collections.namedtuple('Image', ['id', 'url', 'rating'])):
     Represents an image in a user account.
 
     :var id: unique ID used to refer to this image
+    :type id: `string`
     :var url: unique URL to retrieve this image, even if it is unassigned
-    :var rating: integer rating for the image (see `Rating`:class)
+    :type url: `string`
+    :var rating: rating for the image
+    :type rating: `int` (see :class:`Rating`)
     """
     pass
 
@@ -105,9 +108,9 @@ class User(object):
         """
         :param emails: email addresses to check
         :type emails: vararg list of `string`
-        :returns: each key is an email address from the passed-in list and each value is a boolean
-            of whether that email address belongs to a Gravatar account and has an image assigned
-            to it.
+        :returns: dictionary where each key is an email address from the passed-in list and each
+            value is a boolean of whether that email address belongs to a Gravatar account and has
+            an image assigned to it.
         :rtype: {`string`: `boolean`}
         """
         hashes = dict([(hash_email(email), email) for email in emails])
@@ -116,9 +119,9 @@ class User(object):
 
     def emails(self):
         """
-        :returns: each key is an email address belonging to the user account and each value is the
-            `Image`:class assigned to it, or ``None`` if no image is assigned
-        :rtype: {`string`: `Image`:class}
+        :returns: dictionary where each key is an email address belonging to the user account and
+            each value is the :class:`Image` assigned to it, or ``None`` if no image is assigned
+        :rtype: {`string`: :class:`Image`}
         """
         return dict([(email, Image(id=userimage['userimage'], url=userimage['userimage_url'],
                                        rating=userimage['rating'])
@@ -128,7 +131,7 @@ class User(object):
     def images(self):
         """
         :returns: images belonging to the user account
-        :rtype: list of `Image`:class
+        :rtype: list of :class:`Image`
         """
         return [Image(id=id, url=url, rating=int(rating))
                    for id, (rating, url) in self._call('userimages').iteritems()]
@@ -139,7 +142,7 @@ class User(object):
 
         :param string data: binary image data to save
         :param rating: rating for the new image
-        :type rating: `int` (see `Rating`:class)
+        :type rating: `int` (see :class:`Rating`)
         :returns: ID of new image
         :rtype: `string`
         """
@@ -154,7 +157,7 @@ class User(object):
 
         :param string url: URL pointing to an image to save
         :param rating: rating for the new image
-        :type rating: `int` (see `Rating`:class)
+        :type rating: `int` (see :class:`Rating`)
         :returns: ID of new image
         :rtype: `string`
         """
