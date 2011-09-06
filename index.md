@@ -30,19 +30,18 @@ layout: default
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a> by running:</p>
 
-    `$ git clone git://github.com/alekstorm/pygravatar`
+    <pre>$ git clone git://github.com/alekstorm/pygravatar</pre>
 
     <h2>Getting Started</h2>
     <p>
         To verify that the library is working and can connect to the server, run:
 
-        ```python
+        <pre>
         >>> import gravatar
         >>> user = gravatar.User(&lt;email&gt;, password=&lt;password&gt;) # substitute the email address and password of a Gravatar account
         >>> user.test()
         1315290974 # however many seconds have passed since 1970
-        ```
-
+        </pre>
     </p>
 
     <h2>Documentation</h2>
