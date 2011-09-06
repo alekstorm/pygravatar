@@ -6,6 +6,10 @@ from   xmlrpclib import Fault, ServerProxy
 API_ENDPOINT = 'https://secure.gravatar.com/xmlrpc'
 
 def hash_email(email):
+    """
+    :returns: the hash of an email address, suitable for embedding in a URL to retrieve its assigned image,
+        e.g., ``http://gravatar.com/avatar/<hash>``
+    """
     return hashlib.md5(email.strip().lower()).hexdigest()
 
 def _check_email_success(response):
@@ -14,6 +18,17 @@ def _check_email_success(response):
             raise InvalidEmailError(email)
 
 class Rating:
+    """
+    Image rating.
+    ====== =====
+    Member Value
+    ====== =====
+    G      0
+    PG     1
+    R      2
+    X      3
+    ====== =====
+    """
     G = 0
     PG = 1
     R = 2
@@ -52,7 +67,18 @@ class InvalidUrlError(GravatarError):
 class InvalidDataError(GravatarError):
     pass
 
-Userimage = collections.namedtuple('Userimage', ['id', 'url', 'rating'])
+class InvalidImageIdError(GravatarError):
+    pass
+
+class Image(collections.namedtuple('Image', ['id', 'url', 'rating'])):
+    """
+    Represents an image in a user account.
+
+    :var id: unique ID used to refer to this image
+    :var url: unique URL to retrieve this image, even if it is unassigned
+    :var rating: integer rating for the image (see `Rating`:class)
+    """
+    pass
 
 class User(object):
     """
@@ -61,7 +87,8 @@ class User(object):
 
     def __init__(self, email, password=None, apikey=None):
         """
-        At least one of `password` and `apikey` must be specified.
+        At least one of ``password`` and ``apikey`` must be specified.
+
         :param email: an email address belonging to the account
         :param password: password for the account
         :param apikey: API key for your application
@@ -72,37 +99,39 @@ class User(object):
         self.password = password
         self.apikey = apikey
 
-    def exists(self, *addresses):
+    def exists(self, *emails):
         """
         Return a dictionary where each key is an email address from the passed-in list and each
         value is a boolean of whether that email address belongs to a Gravatar account and has an
         image assigned to it.
-        :param addresses: vararg list of email addresses to check
+
+        :param emails: vararg list of email addresses to check
         """
-        hashes = dict([(hash_email(email), email) for email in addresses])
+        hashes = dict([(hash_email(email), email) for email in emails])
         return dict([(hashes[hash], found==1)
                    for hash, found in self._call('exists', hashes=hashes.keys()).iteritems()])
 
-    def addresses(self):
+    def emails(self):
         """
         :returns: a dictionary where each key is an email address belonging to the user account and
-            each value is the `Userimage`:class assigned to it, or ``None`` if no image is assigned
+            each value is the `Image`:class assigned to it, or ``None`` if no image is assigned
         """
-        return dict([(email, Userimage(id=userimage['userimage'], url=userimage['userimage_url'],
+        return dict([(email, Image(id=userimage['userimage'], url=userimage['userimage_url'],
                                        rating=userimage['rating'])
                              if len(userimage['userimage']) > 0 else None)
                    for email, userimage in self._call('addresses').iteritems()])
 
-    def userimages(self):
+    def images(self):
         """
-        :returns: a list of `Userimage`:class objects belonging to the user account
+        :returns: a list of `Image`:class objects belonging to the user account
         """
-        return [Userimage(id=id, url=url, rating=int(rating))
+        return [Image(id=id, url=url, rating=int(rating))
                    for id, (rating, url) in self._call('userimages').iteritems()]
 
     def saveData(self, data, rating):
         """
         Save the data as a new image in the user account.
+
         :param data: binary image data to save
         :param rating: integer rating for the new image (see `Rating`:class)
         :returns: ID of new image
@@ -115,6 +144,7 @@ class User(object):
     def saveUrl(self, url, rating):
         """
         Read the image pointed to by the URL and save it as a new image in the user account.
+
         :param url: URL pointing to an image to save
         :param rating: integer rating for the new image (see `Rating`:class)
         :returns: ID of new image
@@ -124,27 +154,31 @@ class User(object):
             raise InvalidURLError(url)
         return id
 
-    def useUserimage(self, id, *addresses):
+    def useImage(self, id, *emails):
         """
         Assign the image identified by an ID to every email address passed in.
-        :param id: image ID to assign
-        :param addresses: vararg list of email addresses
-        """
-        _check_email_success(self._call('useUserimage', userimage=id, addresses=addresses))
 
-    def removeImage(self, *addresses):
+        :param id: ID of image to assign
+        :param emails: vararg list of email addresses
+        """
+        _check_email_success(self._call('useUserimage', userimage=id, addresses=emails))
+
+    def removeImage(self, *emails):
         """
         For every email address passed in, unassign its image.
-        :param addresses: vararg list of email addresses to be unassigned
-        """
-        _check_email_success(self._call('removeImage', addresses=addresses))
 
-    def deleteUserimage(self, id):
+        :param emails: vararg list of email addresses to be unassigned
+        """
+        _check_email_success(self._call('removeImage', addresses=emails))
+
+    def deleteImage(self, id):
         """
         Delete the image from the user account, and unassign it from any email addresses.
+
+        :param id: ID of image to delete
         """
         if not self._call('deleteUserimage', userimage=id):
-            raise InvalidUserimageIdError(id)
+            raise InvalidImageIdError(id)
 
     def test(self):
         """
