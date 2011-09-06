@@ -2,7 +2,7 @@
 ---
 
 <html><head>
-  <meta charset="utf-8">
+  <meta charset="utf-8"/>
 
   <title>PyGravatar</title>
 
@@ -35,7 +35,6 @@
   <a href="http://github.com/alekstorm/pygravatar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
   <div id="container">
-
     <div class="download">
       <a href="http://github.com/alekstorm/pygravatar/zipball/master">
         <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
