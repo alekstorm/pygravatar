@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.0.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="PyGravatar v0.0.1 documentation" href="#" /> 
   </head>
@@ -29,8 +32,8 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="#">PyGravatar v0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -40,22 +43,19 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-gravatar">
-<h1>PyGravatar 0.0.1 documentation<a class="headerlink" href="#module-gravatar" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="gravatar.Image">
-<em class="property">class </em><tt class="descclassname">gravatar.</tt><tt class="descname">Image</tt><a class="headerlink" href="#gravatar.Image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents an image in a user account.</p>
-<table class="docutils field-list" frame="void" rules="none">
+  <div class="section" id="pygravatar-release-documentation">
+<h1>PyGravatar 0.0.1 documentation<a class="headerlink" href="#pygravatar-release-documentation" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-gravatar"></span><dl class="function">
+<dt id="gravatar.hash_email">
+<tt class="descclassname">gravatar.</tt><tt class="descname">hash_email</tt><big>(</big><em>email</em><big>)</big><a class="headerlink" href="#gravatar.hash_email" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Variable id:</th><td class="field-body">unique ID used to refer to this image</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>email</strong> (<em>string</em>) &#8211; email address</td>
 </tr>
-<tr class="field"><th class="field-name">Variable url:</th><td class="field-body">unique URL to retrieve this image, even if it is unassigned</td>
-</tr>
-<tr class="field"><th class="field-name" colspan="2">Variable rating:</th></tr>
-<tr><td>&nbsp;</td><td class="field-body">rating for the image</td>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the hash of <tt class="docutils literal"><span class="pre">email</span></tt>, suitable for embedding in a URL to retrieve its assigned
+image, e.g., <tt class="docutils literal"><span class="pre">http://gravatar.com/avatar/&lt;hash&gt;</span></tt></td>
 </tr>
 </tbody>
 </table>
@@ -93,18 +93,56 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="gravatar.User">
-<em class="property">class </em><tt class="descclassname">gravatar.</tt><tt class="descname">User</tt><big>(</big><em>email</em>, <em>password=None</em>, <em>apikey=None</em><big>)</big><a class="headerlink" href="#gravatar.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a user account.</p>
-<dl class="method">
-<dt id="gravatar.User.deleteImage">
-<tt class="descname">deleteImage</tt><big>(</big><em>id</em><big>)</big><a class="headerlink" href="#gravatar.User.deleteImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the image from the user account, and unassign it from any email addresses.</p>
+<dt id="gravatar.Image">
+<em class="property">class </em><tt class="descclassname">gravatar.</tt><tt class="descname">Image</tt><a class="headerlink" href="#gravatar.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents an image in a user account.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>string id</em> &#8211; ID of image to delete</td>
+<tr class="field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> &#8211; unique ID used to refer to this image</li>
+<li><strong>url</strong> &#8211; unique URL to retrieve this image, even if it is unassigned</li>
+<li><strong>rating</strong> &#8211; rating for the image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="gravatar.User">
+<em class="property">class </em><tt class="descclassname">gravatar.</tt><tt class="descname">User</tt><big>(</big><em>email</em>, <em>password=None</em>, <em>apikey=None</em><big>)</big><a class="headerlink" href="#gravatar.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a user account.</p>
+<p>At least one of <tt class="docutils literal"><span class="pre">password</span></tt> and <tt class="docutils literal"><span class="pre">apikey</span></tt> must be specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>email</strong> (<em>string</em>) &#8211; an email address belonging to the account</li>
+<li><strong>password</strong> (<em>string</em>) &#8211; password for the account</li>
+<li><strong>apikey</strong> (<em>string</em>) &#8211; API key for your application</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="gravatar.User.exists">
+<tt class="descname">exists</tt><big>(</big><em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.exists" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>emails</strong> (vararg list of <cite>string</cite>) &#8211; email addresses to check</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dictionary where each key is an email address from the passed-in list and each
+value is a boolean of whether that email address belongs to a Gravatar account and has
+an image assigned to it.</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <cite>boolean</cite>}</td>
 </tr>
 </tbody>
 </table>
@@ -118,28 +156,9 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">dictionary where each key is an email address belonging to the user account and
-each value is the <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a> assigned to it, or <tt class="xref docutils literal"><span class="pre">None</span></tt> if no image is assigned</td>
+each value is the <a class="reference internal" href="#gravatar.Image" title="gravatar.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> assigned to it, or <tt class="xref docutils literal"><span class="pre">None</span></tt> if no image is assigned</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a>}</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="gravatar.User.exists">
-<tt class="descname">exists</tt><big>(</big><em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.exists" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>emails</em> (vararg list of <cite>string</cite>) &#8211; email addresses to check</td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">dictionary where each key is an email address from the passed-in list and each
-value is a boolean of whether that email address belongs to a Gravatar account and has
-an image assigned to it.</td>
-</tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <cite>boolean</cite>}</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">{<cite>string</cite>: <a class="reference internal" href="#gravatar.Image" title="gravatar.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a>}</td>
 </tr>
 </tbody>
 </table>
@@ -154,21 +173,7 @@ an image assigned to it.</td>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">images belonging to the user account</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <a title="gravatar.Image" class="reference internal" href="#gravatar.Image"><tt class="xref docutils literal"><span class="pre">Image</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="gravatar.User.removeImage">
-<tt class="descname">removeImage</tt><big>(</big><em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.removeImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>For every email address passed in, unassign its image.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>emails</em> (vararg list of <cite>string</cite>) &#8211; email addresses to be unassigned</td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of <a class="reference internal" href="#gravatar.Image" title="gravatar.Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -183,8 +188,8 @@ an image assigned to it.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><em>string data</em> &#8211; binary image data to save</li>
-<li><em>rating</em> (<cite>int</cite> (see <a title="gravatar.Rating" class="reference internal" href="#gravatar.Rating"><tt class="xref docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
+<li><strong>data</strong> (<em>string</em>) &#8211; binary image data to save</li>
+<li><strong>rating</strong> (<cite>int</cite> (see <a class="reference internal" href="#gravatar.Rating" title="gravatar.Rating"><tt class="xref py py-class docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
 </ul>
 </td>
 </tr>
@@ -207,8 +212,8 @@ an image assigned to it.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><em>string url</em> &#8211; URL pointing to an image to save</li>
-<li><em>rating</em> (<cite>int</cite> (see <a title="gravatar.Rating" class="reference internal" href="#gravatar.Rating"><tt class="xref docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
+<li><strong>url</strong> (<em>string</em>) &#8211; URL pointing to an image to save</li>
+<li><strong>rating</strong> (<cite>int</cite> (see <a class="reference internal" href="#gravatar.Rating" title="gravatar.Rating"><tt class="xref py py-class docutils literal"><span class="pre">Rating</span></tt></a>)) &#8211; rating for the new image</li>
 </ul>
 </td>
 </tr>
@@ -217,6 +222,52 @@ an image assigned to it.</td>
 </tr>
 <tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>string</cite></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="gravatar.User.useImage">
+<tt class="descname">useImage</tt><big>(</big><em>id</em>, <em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.useImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign the image identified by an ID to every email address passed in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> (<em>string</em>) &#8211; ID of image to assign</li>
+<li><strong>emails</strong> (vararg list of <cite>string</cite>) &#8211; email addresses to assign the image to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="gravatar.User.removeImage">
+<tt class="descname">removeImage</tt><big>(</big><em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.removeImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>For every email address passed in, unassign its image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>emails</strong> (vararg list of <cite>string</cite>) &#8211; email addresses to be unassigned</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="gravatar.User.deleteImage">
+<tt class="descname">deleteImage</tt><big>(</big><em>id</em><big>)</big><a class="headerlink" href="#gravatar.User.deleteImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the image from the user account, and unassign it from any email addresses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<em>string</em>) &#8211; ID of image to delete</td>
 </tr>
 </tbody>
 </table>
@@ -237,49 +288,15 @@ an image assigned to it.</td>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="gravatar.User.useImage">
-<tt class="descname">useImage</tt><big>(</big><em>id</em>, <em>*emails</em><big>)</big><a class="headerlink" href="#gravatar.User.useImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assign the image identified by an ID to every email address passed in.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><em>string id</em> &#8211; ID of image to assign</li>
-<li><em>emails</em> (vararg list of <cite>string</cite>) &#8211; email addresses to assign the image to</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="gravatar.hash_email">
-<tt class="descclassname">gravatar.</tt><tt class="descname">hash_email</tt><big>(</big><em>email</em><big>)</big><a class="headerlink" href="#gravatar.hash_email" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>string email</em> &#8211; email address</td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the hash of <tt class="docutils literal"><span class="pre">email</span></tt>, suitable for embedding in a URL to retrieve its assigned
-image, e.g., <tt class="docutils literal"><span class="pre">http://gravatar.com/avatar/&lt;hash&gt;</span></tt></td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference external" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference external" href="modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference external" href="search.html"><em>Search Page</em></a></li>
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
 
@@ -289,30 +306,30 @@ image, e.g., <tt class="docutils literal"><span class="pre">http://gravatar.com/
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="#">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">PyGravatar 0.0.1 documentation</a></li>
-<li><a class="reference external" href="#indices-and-tables">Indices and tables</a></li>
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PyGravatar 0.0.1 documentation</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/index.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -324,14 +341,14 @@ image, e.g., <tt class="docutils literal"><span class="pre">http://gravatar.com/
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
+          <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li><a href="#">PyGravatar v0.0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2011, Alek Storm.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.4.
+        &copy; Copyright 2011, Alek Storm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>
