@@ -69,7 +69,7 @@
 
         ```python
         >>> import gravatar
-        >>> user = gravatar.User(<email>, password=<password>) # substitute the email address and password of a Gravatar account
+        >>> user = gravatar.User(&lt;email&gt;, password=&lt;password&gt;) # substitute the email address and password of a Gravatar account
         >>> user.test()
         1315290974 # however many seconds have passed since 1970
         ```
