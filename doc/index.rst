@@ -1,12 +1,12 @@
 PyGravatar |release| documentation
 ===========================================
 
-Contents:
+.. Contents:
 
-.. toctree::
+   toctree::
    :maxdepth: 2
 
-.. automodule:: pygravatar
+.. automodule:: gravatar
    :members:
 
 Indices and tables
