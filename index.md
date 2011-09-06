@@ -1,38 +1,7 @@
 ---
+title: PyGravatar
+layout: default
 ---
-
-<html><head>
-  <meta charset="utf-8"/>
-
-  <title>PyGravatar</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #6ae8fa;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #951705; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #951705; }
-    h3 { text-align: center; color: #951705; }
-    a { color: #951705; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
-
-<body>
-  <a href="http://github.com/alekstorm/pygravatar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
   <div id="container">
     <div class="download">
@@ -81,5 +50,3 @@
         The underlying XML-RPC API specification is also available <a href="http://en.gravatar.com/site/implement/xmlrpc/">here</a>.
     </p>
   </div>
-</body>
-</html>
