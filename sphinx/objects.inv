@@ -1,0 +1,8 @@
+# Sphinx inventory version 1
+# Project: python-gravatar
+# Version: 0.0.1
+pygravatar mod index.html
+pygravatar.Userimage.rating attribute index.html
+pygravatar.Userimage.url attribute index.html
+pygravatar.Userimage.id attribute index.html
+pygravatar.Userimage class index.html
