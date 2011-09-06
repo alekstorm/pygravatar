@@ -58,16 +58,26 @@
         You can browse the source code online at <a href="http://github.com/alekstorm/pygravatar">its GitHub page</a>.
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a> by running:</p>
-    <pre>$ git clone git://github.com/alekstorm/pygravatar</pre>
+
+    `$ git clone git://github.com/alekstorm/pygravatar`
 
     <h2>Getting Started</h2>
     <p>
         To verify that the library is working and can connect to the server, run:
-        <script src="https://gist.github.com/1196787.js"></script>
+
+        ```python
+        >>> import gravatar
+        >>> user = gravatar.User(<email>, password=<password>) # substitute the email address and password of a Gravatar account
+        >>> user.test()
+        1315290974 # however many seconds have passed since 1970
+        ```
     </p>
 
     <h2>Documentation</h2>
-    <p>Full API documentation is available <a href="sphinx">here</a>.<br><br>The underlying XML-RPC API specification is also available <a href="http://en.gravatar.com/site/implement/xmlrpc/">here</a>.</p>
+    <p>
+        Full API documentation is available <a href="sphinx">here</a>.<br><br>
+        The underlying XML-RPC API specification is also available <a href="http://en.gravatar.com/site/implement/xmlrpc/">here</a>.
+    </p>
   </div>
 </body>
 </html>
