@@ -1,4 +1,4 @@
-Welcome to python-gravatar's documentation!
+PyGravatar |release| documentation
 ===========================================
 
 Contents:

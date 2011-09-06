@@ -55,10 +55,13 @@ class InvalidDataError(GravatarError):
 Userimage = collections.namedtuple('Userimage', ['id', 'url', 'rating'])
 
 class User(object):
+    """
+    Represents a user account.
+    """
+
     def __init__(self, email, password=None, apikey=None):
         """
-        Construct an object representing a user account. At least one of `password` and `apikey`
-        must be specified.
+        At least one of `password` and `apikey` must be specified.
         :param email: an email address belonging to the account
         :param password: password for the account
         :param apikey: API key for your application
@@ -74,7 +77,7 @@ class User(object):
         Return a dictionary where each key is an email address from the passed-in list and each
         value is a boolean of whether that email address belongs to a Gravatar account and has an
         image assigned to it.
-        :param varargs: list of email addresses to check
+        :param addresses: vararg list of email addresses to check
         """
         hashes = dict([(hash_email(email), email) for email in addresses])
         return dict([(hashes[hash], found==1)
@@ -83,7 +86,7 @@ class User(object):
     def addresses(self):
         """
         :returns: a dictionary where each key is an email address belonging to the user account and
-        each value is the `Userimage`:class assigned to it, or `None` if no image is assigned
+            each value is the `Userimage`:class assigned to it, or ``None`` if no image is assigned
         """
         return dict([(email, Userimage(id=userimage['userimage'], url=userimage['userimage_url'],
                                        rating=userimage['rating'])
@@ -92,7 +95,7 @@ class User(object):
 
     def userimages(self):
         """
-        :returns: a list of class:`Userimage`s belonging to the user account
+        :returns: a list of `Userimage`:class objects belonging to the user account
         """
         return [Userimage(id=id, url=url, rating=int(rating))
                    for id, (rating, url) in self._call('userimages').iteritems()]
@@ -125,14 +128,14 @@ class User(object):
         """
         Assign the image identified by an ID to every email address passed in.
         :param id: image ID to assign
-        :param *varargs: list of email addresses
+        :param addresses: vararg list of email addresses
         """
         _check_email_success(self._call('useUserimage', userimage=id, addresses=addresses))
 
     def removeImage(self, *addresses):
         """
         For every email address passed in, unassign its image.
-        :param *varargs: list of email addresses to be unassigned
+        :param addresses: vararg list of email addresses to be unassigned
         """
         _check_email_success(self._call('removeImage', addresses=addresses))
 
