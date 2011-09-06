@@ -42,6 +42,7 @@ layout: default
         >>> user.test()
         1315290974 # however many seconds have passed since 1970
         ```
+
     </p>
 
     <h2>Documentation</h2>
