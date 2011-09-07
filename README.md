@@ -4,7 +4,7 @@ PyGravatar is a set of Python bindings for the Gravatar API.
 
 ## Getting Started ##
 
-To install, run `pip install pygravatar`. To verify that the library is working and can connect to the server, run:
+To install, run `pip install py-gravatar`. To verify that the library is working and can connect to the server, run:
 
 ```python
 >>> import gravatar
