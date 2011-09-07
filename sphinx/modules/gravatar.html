@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gravatar &mdash; PyGravatar v0.0.1 documentation</title>
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="PyGravatar v0.0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">PyGravatar v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for gravatar</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">from</span>   <span class="nn">xmlrpclib</span> <span class="kn">import</span> <span class="n">Fault</span><span class="p">,</span> <span class="n">ServerProxy</span>
+
+<span class="n">API_ENDPOINT</span> <span class="o">=</span> <span class="s">&#39;https://secure.gravatar.com/xmlrpc&#39;</span>
+
+<div class="viewcode-block" id="hash_email"><a class="viewcode-back" href="../index.html#gravatar.hash_email">[docs]</a><span class="k">def</span> <span class="nf">hash_email</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param string email: email address</span>
+<span class="sd">    :returns: the hash of ``email``, suitable for embedding in a URL to retrieve its assigned</span>
+<span class="sd">        image, e.g., ``http://gravatar.com/avatar/&lt;hash&gt;``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</div>
+<span class="k">def</span> <span class="nf">_check_email_success</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">email</span><span class="p">,</span> <span class="n">success</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidEmailError</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Rating"><a class="viewcode-back" href="../index.html#gravatar.Rating">[docs]</a><span class="k">class</span> <span class="nc">Rating</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Image rating.</span>
+
+<span class="sd">    ====== =====</span>
+<span class="sd">    Member Value</span>
+<span class="sd">    ====== =====</span>
+<span class="sd">    G      0</span>
+<span class="sd">    PG     1</span>
+<span class="sd">    R      2</span>
+<span class="sd">    X      3</span>
+<span class="sd">    ====== =====</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">PG</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="mi">3</span>
+</div>
+<span class="k">class</span> <span class="nc">GravatarError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">SecureError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">InternalError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">AuthenticationError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ParameterMissingError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ParameterIncorrectError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">MiscError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">UnknownError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">InvalidEmailError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">InvalidUrlError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">InvalidDataError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">InvalidImageIdError</span><span class="p">(</span><span class="n">GravatarError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="Image"><a class="viewcode-back" href="../index.html#gravatar.Image">[docs]</a><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;Image&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">,</span> <span class="s">&#39;rating&#39;</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an image in a user account.</span>
+
+<span class="sd">    :var id: unique ID used to refer to this image</span>
+<span class="sd">    :type id: `string`</span>
+<span class="sd">    :var url: unique URL to retrieve this image, even if it is unassigned</span>
+<span class="sd">    :type url: `string`</span>
+<span class="sd">    :var rating: rating for the image</span>
+<span class="sd">    :type rating: `int` (see :class:`Rating`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="User"><a class="viewcode-back" href="../index.html#gravatar.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a user account.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">apikey</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        At least one of ``password`` and ``apikey`` must be specified.</span>
+
+<span class="sd">        :param string email: an email address belonging to the account</span>
+<span class="sd">        :param string password: password for the account</span>
+<span class="sd">        :param string apikey: API key for your application</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">ServerProxy</span><span class="p">(</span><span class="n">API_ENDPOINT</span><span class="o">+</span><span class="s">&#39;?user=&#39;</span><span class="o">+</span><span class="n">hash_email</span><span class="p">(</span><span class="n">email</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">password</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">apikey</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Must specify either &#39;password&#39; or &#39;apikey&#39; parameter&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span> <span class="o">=</span> <span class="n">apikey</span>
+
+<div class="viewcode-block" id="User.exists"><a class="viewcode-back" href="../index.html#gravatar.User.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">emails</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param emails: email addresses to check</span>
+<span class="sd">        :type emails: vararg list of `string`</span>
+<span class="sd">        :returns: dictionary where each key is an email address from the passed-in list and each</span>
+<span class="sd">            value is a boolean of whether that email address belongs to a Gravatar account and has</span>
+<span class="sd">            an image assigned to it.</span>
+<span class="sd">        :rtype: {`string`: `boolean`}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hashes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">hash_email</span><span class="p">(</span><span class="n">email</span><span class="p">),</span> <span class="n">email</span><span class="p">)</span> <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">emails</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">hashes</span><span class="p">[</span><span class="nb">hash</span><span class="p">],</span> <span class="n">found</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">found</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;exists&#39;</span><span class="p">,</span> <span class="n">hashes</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+</div>
+<div class="viewcode-block" id="User.emails"><a class="viewcode-back" href="../index.html#gravatar.User.emails">[docs]</a>    <span class="k">def</span> <span class="nf">emails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: dictionary where each key is an email address belonging to the user account and</span>
+<span class="sd">            each value is the :class:`Image` assigned to it, or ``None`` if no image is assigned</span>
+<span class="sd">        :rtype: {`string`: :class:`Image`}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">email</span><span class="p">,</span> <span class="n">Image</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">userimage</span><span class="p">[</span><span class="s">&#39;userimage&#39;</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">userimage</span><span class="p">[</span><span class="s">&#39;userimage_url&#39;</span><span class="p">],</span>
+                                       <span class="n">rating</span><span class="o">=</span><span class="n">userimage</span><span class="p">[</span><span class="s">&#39;rating&#39;</span><span class="p">])</span>
+                             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">userimage</span><span class="p">[</span><span class="s">&#39;userimage&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">email</span><span class="p">,</span> <span class="n">userimage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;addresses&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+</div>
+<div class="viewcode-block" id="User.images"><a class="viewcode-back" href="../index.html#gravatar.User.images">[docs]</a>    <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: images belonging to the user account</span>
+<span class="sd">        :rtype: list of :class:`Image`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Image</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">rating</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">rating</span><span class="p">))</span>
+                   <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="p">(</span><span class="n">rating</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;userimages&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+</div>
+<div class="viewcode-block" id="User.saveData"><a class="viewcode-back" href="../index.html#gravatar.User.saveData">[docs]</a>    <span class="k">def</span> <span class="nf">saveData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">rating</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the data as a new image in the user account.</span>
+
+<span class="sd">        :param string data: binary image data to save</span>
+<span class="sd">        :param rating: rating for the new image</span>
+<span class="sd">        :type rating: `int` (see :class:`Rating`)</span>
+<span class="sd">        :returns: ID of new image</span>
+<span class="sd">        :rtype: `string`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;saveData&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">rating</span><span class="o">=</span><span class="n">rating</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDataError</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">id</span>
+</div>
+<div class="viewcode-block" id="User.saveUrl"><a class="viewcode-back" href="../index.html#gravatar.User.saveUrl">[docs]</a>    <span class="k">def</span> <span class="nf">saveUrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">rating</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the image pointed to by the URL and save it as a new image in the user account.</span>
+
+<span class="sd">        :param string url: URL pointing to an image to save</span>
+<span class="sd">        :param rating: rating for the new image</span>
+<span class="sd">        :type rating: `int` (see :class:`Rating`)</span>
+<span class="sd">        :returns: ID of new image</span>
+<span class="sd">        :rtype: `string`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;saveUrl&#39;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">rating</span><span class="o">=</span><span class="n">rating</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidURLError</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">id</span>
+</div>
+<div class="viewcode-block" id="User.useImage"><a class="viewcode-back" href="../index.html#gravatar.User.useImage">[docs]</a>    <span class="k">def</span> <span class="nf">useImage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="o">*</span><span class="n">emails</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign the image identified by an ID to every email address passed in.</span>
+
+<span class="sd">        :param string id: ID of image to assign</span>
+<span class="sd">        :param emails: email addresses to assign the image to</span>
+<span class="sd">        :type emails: vararg list of `string`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_check_email_success</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;useUserimage&#39;</span><span class="p">,</span> <span class="n">userimage</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">addresses</span><span class="o">=</span><span class="n">emails</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="User.removeImage"><a class="viewcode-back" href="../index.html#gravatar.User.removeImage">[docs]</a>    <span class="k">def</span> <span class="nf">removeImage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">emails</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For every email address passed in, unassign its image.</span>
+
+<span class="sd">        :param emails: email addresses to be unassigned</span>
+<span class="sd">        :type emails: vararg list of `string`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_check_email_success</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;removeImage&#39;</span><span class="p">,</span> <span class="n">addresses</span><span class="o">=</span><span class="n">emails</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="User.deleteImage"><a class="viewcode-back" href="../index.html#gravatar.User.deleteImage">[docs]</a>    <span class="k">def</span> <span class="nf">deleteImage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the image from the user account, and unassign it from any email addresses.</span>
+
+<span class="sd">        :param string id: ID of image to delete</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;deleteUserimage&#39;</span><span class="p">,</span> <span class="n">userimage</span><span class="o">=</span><span class="nb">id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidImageIdError</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="User.test"><a class="viewcode-back" href="../index.html#gravatar.User.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the server&#39;s number of seconds since the current epoch.</span>
+<span class="sd">        :rtype: `int`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">)[</span><span class="s">&#39;response&#39;</span><span class="p">]</span>
+</div>
+    <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;apikey&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apikey</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">grav</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">Fault</span> <span class="k">as</span> <span class="n">fault</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="p">{</span>
+                <span class="o">-</span><span class="mi">7</span><span class="p">:</span> <span class="n">SecureError</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">8</span><span class="p">:</span> <span class="n">InternalError</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="n">AuthenticationError</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">10</span><span class="p">:</span> <span class="n">ParameterMissingError</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">11</span><span class="p">:</span> <span class="n">ParameterIncorrectError</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">100</span><span class="p">:</span> <span class="n">MiscError</span><span class="p">,</span>
+            <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fault</span><span class="o">.</span><span class="n">faultCode</span><span class="p">,</span> <span class="n">UnknownError</span><span class="p">)(</span><span class="n">fault</span><span class="o">.</span><span class="n">faultString</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">PyGravatar v0.0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alek Storm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
