@@ -23,7 +23,7 @@ layout: default
     <h2>Installation</h2>
     <p>
         To install, run:
-        <pre>pip install pygravatar</pre>
+        <pre>pip install py-gravatar</pre>
         You can download the source code in either
         <a href="http://github.com/alekstorm/pygravatar/zipball/master">zip</a> or
         <a href="http://github.com/alekstorm/pygravatar/tarball/master">tar</a> formats,
