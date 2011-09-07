@@ -20,13 +20,14 @@ layout: default
     <h2>Author</h2>
     <p>Alek Storm (alek.storm@gmail.com)</p>
 
-    <h2>Download</h2>
+    <h2>Installation</h2>
     <p>
-        To install, run `pip install pygravatar`.
-        You can download this project in either
+        To install, run:
+        <pre>pip install pygravatar</pre>
+        You can download the source code in either
         <a href="http://github.com/alekstorm/pygravatar/zipball/master">zip</a> or
-        <a href="http://github.com/alekstorm/pygravatar/tarball/master">tar</a> formats.
-        You can browse the source code online at <a href="http://github.com/alekstorm/pygravatar">its GitHub page</a>.
+        <a href="http://github.com/alekstorm/pygravatar/tarball/master">tar</a> formats,
+        or browse it online at <a href="http://github.com/alekstorm/pygravatar">its GitHub page</a>.
     </p>
     <p>You can also clone the project with <a href="http://git-scm.com">Git</a> by running:</p>
 
@@ -44,8 +45,9 @@ layout: default
     </p>
 
     <h2>Documentation</h2>
+    <p>Full API documentation is available <a href="sphinx">here</a>.</p>
     <p>
-        Full API documentation is available <a href="sphinx">here</a>.<br><br>
-        The underlying XML-RPC API specification is also available <a href="http://en.gravatar.com/site/implement/xmlrpc/">here</a>.
+        The underlying XML-RPC API specification is also available
+        <a href="http://en.gravatar.com/site/implement/xmlrpc/">here</a>.
     </p>
-  </div>
+</div>

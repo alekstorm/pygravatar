@@ -1,0 +1,6 @@
+gravatar.py
+setup.py
+py_gravatar.egg-info/PKG-INFO
+py_gravatar.egg-info/SOURCES.txt
+py_gravatar.egg-info/dependency_links.txt
+py_gravatar.egg-info/top_level.txt
