@@ -18,11 +18,15 @@ if major >= 3:
     kwargs["use_2to3"] = True
 
 distutils.core.setup(
-    name="py-gravatar",
-    version="0.0.1",
+    name = "py-gravatar",
+    version = "0.0.2",
+    license = "MIT",
     py_modules = ["gravatar"],
-    author="Alek Storm",
-    author_email="alek.storm@gmail.com",
-    url="http://alekstorm.github.com/pygravatar",
+    package_data = {"": ["LICENSE"]},
+    author = "Alek Storm",
+    author_email = "alek.storm@gmail.com",
+    url = "http://alekstorm.github.com/pygravatar",
+    description = "Python bindings for the Gravatar API",
+    long_description = open("README.md").read(),
     **kwargs
 )
