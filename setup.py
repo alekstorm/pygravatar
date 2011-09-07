@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import distutils.core
+import subprocess
 import sys
 # Importing setuptools adds some features like "setup.py develop", but
 # it's optional so swallow the error if it's not there.
@@ -19,14 +20,14 @@ if major >= 3:
 
 distutils.core.setup(
     name = "py-gravatar",
-    version = "0.0.2",
+    version = "0.0.3",
     license = "MIT",
     py_modules = ["gravatar"],
-    package_data = {"": ["LICENSE"]},
+    package_data = {"": ["README.md", "LICENSE"]},
     author = "Alek Storm",
     author_email = "alek.storm@gmail.com",
     url = "http://alekstorm.github.com/pygravatar",
     description = "Python bindings for the Gravatar API",
-    long_description = open("README.md").read(),
+    long_description = subprocess.Popen('pandoc -r markdown -w rst README.md', stdout=subprocess.PIPE, shell=True).communicate()[0],
     **kwargs
 )
